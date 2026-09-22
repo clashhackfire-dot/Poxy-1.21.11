@@ -1,5 +1,5 @@
 plugins {
-    // Minecraft 1.21.11 is still obfuscated, so use the remapping Loom plugin.
+    // Minecraft 1.21.11 is obfuscated, so use the remapping Loom plugin.
     id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
     id 'maven-publish'
 }
@@ -31,6 +31,9 @@ loom {
 }
 
 dependencies {
+    // 1.21.11 is obfuscated and therefore requires an explicit mappings dependency.
+    mappings loom.officialMojangMappings()
+
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
