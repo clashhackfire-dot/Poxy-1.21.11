@@ -20,18 +20,21 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+          cache: gradle
 
       - name: Download Android LWJGL natives
         run: |
           mkdir -p natives
-          curl -L --fail -o natives/lwjgl-lmdb-3.3.6-snapshot-natives-linux-android.jar https://raw.githubusercontent.com/Jokypond/Poxy/main/natives/lwjgl-lmdb-3.3.6-snapshot-natives-linux-android.jar
-          curl -L --fail -o natives/lwjgl-zstd-3.3.6-snapshot-natives-linux-android.jar https://raw.githubusercontent.com/Jokypond/Poxy/main/natives/lwjgl-zstd-3.3.6-snapshot-natives-linux-android.jar
+          curl -fL --retry 3 --retry-delay 2 -o natives/lwjgl-lmdb-3.3.6-snapshot-natives-linux-android.jar https://raw.githubusercontent.com/Jokypond/Poxy/main/natives/lwjgl-lmdb-3.3.6-snapshot-natives-linux-android.jar
+          curl -fL --retry 3 --retry-delay 2 -o natives/lwjgl-zstd-3.3.6-snapshot-natives-linux-android.jar https://raw.githubusercontent.com/Jokypond/Poxy/main/natives/lwjgl-zstd-3.3.6-snapshot-natives-linux-android.jar
+          test -s natives/lwjgl-lmdb-3.3.6-snapshot-natives-linux-android.jar
+          test -s natives/lwjgl-zstd-3.3.6-snapshot-natives-linux-android.jar
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - name: Make Gradle executable
+        run: chmod +x gradlew
 
-      - name: Build
-        run: gradle build --no-daemon
+      - name: Build with Gradle wrapper
+        run: ./gradlew clean build --refresh-dependencies --no-daemon --stacktrace
 
       - name: Upload JAR
         uses: actions/upload-artifact@v4
