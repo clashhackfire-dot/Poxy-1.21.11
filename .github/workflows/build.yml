@@ -20,12 +20,12 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-          cache: gradle
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: '9.2.1'
+          cache-cleanup: on-success
 
       - name: Download Android LWJGL natives
         run: |
@@ -41,7 +41,7 @@ jobs:
           gradle --version
 
       - name: Build with Gradle
-        run: gradle clean build --refresh-dependencies --no-daemon --stacktrace
+        run: gradle clean build --no-daemon --stacktrace
 
       - name: Upload JAR
         uses: actions/upload-artifact@v4
