@@ -1,5 +1,6 @@
 plugins {
-    id 'net.fabricmc.fabric-loom' version "${loom_version}"
+    // Minecraft 1.21.11 is still obfuscated, so use the remapping Loom plugin.
+    id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
     id 'maven-publish'
 }
 
@@ -9,10 +10,14 @@ group = project.maven_group
 repositories {
     exclusiveContent {
         forRepository {
-            maven { name = "Modrinth"; url = "https://api.modrinth.com/maven" }
+            maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
         }
         filter { includeGroup "maven.modrinth" }
     }
+    flatDir { dirs 'natives' }
 }
 
 loom {
@@ -31,9 +36,8 @@ dependencies {
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
     implementation "maven.modrinth:voxy:${project.voxy}"
 
-    // Android LWJGL native JARs are downloaded by GitHub Actions into natives/.
-    implementation files('natives/lwjgl-zstd-3.3.6-snapshot-natives-linux-android.jar')
-    implementation files('natives/lwjgl-lmdb-3.3.6-snapshot-natives-linux-android.jar')
+    include(implementation(name: 'lwjgl-zstd-3.3.6-snapshot-natives-linux-android'))
+    include(implementation(name: 'lwjgl-lmdb-3.3.6-snapshot-natives-linux-android'))
 }
 
 processResources {
@@ -41,7 +45,9 @@ processResources {
     filesMatching("fabric.mod.json") { expand "version": project.version }
 }
 
-tasks.withType(JavaCompile).configureEach { it.options.release = 21 }
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 21
+}
 
 java {
     withSourcesJar()
@@ -54,5 +60,7 @@ jar {
 }
 
 publishing {
-    publications { create("mavenJava", MavenPublication) { from components.java } }
+    publications {
+        create("mavenJava", MavenPublication) { from components.java }
+    }
 }
