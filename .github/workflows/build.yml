@@ -30,11 +30,8 @@ jobs:
           test -s natives/lwjgl-lmdb-3.3.6-snapshot-natives-linux-android.jar
           test -s natives/lwjgl-zstd-3.3.6-snapshot-natives-linux-android.jar
 
-      - name: Make Gradle executable
-        run: chmod +x gradlew
-
-      - name: Build with Gradle wrapper
-        run: ./gradlew clean build --refresh-dependencies --no-daemon --stacktrace
+      - name: Build with Gradle
+        run: gradle clean build --refresh-dependencies --no-daemon --stacktrace
 
       - name: Upload JAR
         uses: actions/upload-artifact@v4
