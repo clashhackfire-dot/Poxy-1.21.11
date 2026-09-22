@@ -35,9 +35,14 @@ dependencies {
     mappings loom.officialMojangMappings()
 
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-    implementation "maven.modrinth:voxy:${project.voxy}"
+
+    // These must be "mod" dependencies so Loom remaps them and exposes their
+    // bundled libraries (Mixin, ASM, MixinExtras) on the compile classpath.
+    // Plain implementation() skips that step entirely, which is why Mixin/ASM
+    // and Voxy's classes were unresolvable.
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    modImplementation "maven.modrinth:voxy:${project.voxy}"
 
     include(implementation(name: 'lwjgl-zstd-3.3.6-snapshot-natives-linux-android'))
     include(implementation(name: 'lwjgl-lmdb-3.3.6-snapshot-natives-linux-android'))
