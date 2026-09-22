@@ -1,0 +1,48 @@
+name: Build Poxy 1.21.11
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Download Android LWJGL natives
+        run: |
+          mkdir -p natives
+          curl -L --fail -o natives/lwjgl-lmdb-3.3.6-snapshot-natives-linux-android.jar https://raw.githubusercontent.com/Jokypond/Poxy/main/natives/lwjgl-lmdb-3.3.6-snapshot-natives-linux-android.jar
+          curl -L --fail -o natives/lwjgl-zstd-3.3.6-snapshot-natives-linux-android.jar https://raw.githubusercontent.com/Jokypond/Poxy/main/natives/lwjgl-zstd-3.3.6-snapshot-natives-linux-android.jar
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build
+        run: gradle build --no-daemon
+
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: Poxy-1.21.11
+          path: build/libs/*.jar
+          if-no-files-found: error
+
+      - name: Publish release JAR
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/libs/*.jar
+          generate_release_notes: true
