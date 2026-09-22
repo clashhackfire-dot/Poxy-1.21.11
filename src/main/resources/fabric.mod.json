@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "poxy",
+  "version": "${version}",
+  "name": "Poxy",
+  "description": "Small mod that mixins into Voxy to make it work with Minecraft launchers on Android.",
+  "authors": ["Jokypond"],
+  "contact": {"sources": "https://github.com/Jokypond/Poxy"},
+  "license": "GNU GPLv3",
+  "entrypoints": {"main": ["io.github.jokypond.Poxy"]},
+  "environment": "client",
+  "mixins": [{"config": "poxy.mixins.json", "environment": "client"}],
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "recommends": {"voxy": "*"}
+}
